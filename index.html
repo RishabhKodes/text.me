@@ -1,59 +1,63 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>QuaranChat</title>
 	<style>
-		body{
-			background:#f9f9f9;
+		body {
+			background: #f9f9f9;
 		}
 
-		#container{
-			width:700px;
-			margin:0 auto;
+		#container {
+			width: 700px;
+			margin: 0 auto;
 		}
 
-		#chatWindow{
-			height:300px;
+		#chatWindow {
+			height: 50%;
+			min-height: 200px;
 		}
 
-		#mainWrapper{
-			display:none;
+		#mainWrapper {
+			display: none;
 		}
 
-		#chatWrapper{
-			float:left;
-			border:1px #ccc solid;
+		#chatWrapper {
+			float: left;
+			border: 1px #ccc solid;
 			border-radius: 10px;
-			background:#f4f4f4;
-			padding:10px;
+			background: #f4f4f4;
+			padding: 10px;
+			padding-bottom: 30px;
 		}
 
-		#userWrapper{
-			float:left;
-			border:1px #ccc solid;
+		#userWrapper {
+			float: left;
+			border: 1px #ccc solid;
 			border-radius: 10px;
-			background:#f4f4f4;
-			padding:10px;
-			margin-left:20px;
-			width:150px;
-			max-height:200px;
+			background: #f4f4f4;
+			padding: 10px;
+			margin-left: 20px;
+			width: 150px;
+			max-height: 200px;
 		}
 
-		#namesWrapper{
-			float:left;
-			border:1px #ccc solid;
+		#namesWrapper {
+			float: left;
+			border: 1px #ccc solid;
 			border-radius: 10px;
-			background:#f4f4f4;
-			padding:10px;
-			margin-left:20px;
+			background: #f4f4f4;
+			padding: 10px;
+			margin-left: 20px;
 		}
 
-		input{
-			height:30px;
-			border:solid 1px #ccc;
+		input {
+			height: 30px;
+			border: solid 1px #ccc;
 		}
 	</style>
 </head>
+
 <body>
 	<div id="container">
 		<div id="namesWrapper">
@@ -71,7 +75,7 @@
 			<div id="chatWrapper">
 				<div id="chatWindow"></div>
 				<form id="messageForm">
-					<input type="text" size="35" id="message" placeholder="Say Something...">
+					<input type="text" size="35" id="message" placeholder="Say Something..." style="margin-top: 20px;">
 					<input type="submit" value="Submit">
 				</form>
 			</div>
@@ -83,9 +87,9 @@
 	</div>
 
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
-		<script>
-		$(function(){
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		$(function () {
 			var socket = io.connect();
 			var $messageForm = $('#messageForm');
 			var $message = $('#message');
@@ -95,37 +99,38 @@
 			var $username = $('#username');
 			var $error = $('#error');
 
-			$usernameForm.submit(function(e){
+			$usernameForm.submit(function (e) {
 				e.preventDefault();
-				socket.emit('new user', $username.val(), function(data){
-					if(data){
+				socket.emit('new user', $username.val(), function (data) {
+					if (data) {
 						$('#namesWrapper').hide();
 						$('#mainWrapper').show();
-					} else{
+					} else {
 						$error.html('Username is taken');
 					}
 				});
 			});
 
-			socket.on('usernames', function(data){
+			socket.on('usernames', function (data) {
 				var html = '';
-				for(i = 0;i < data.length;i++){
+				for (i = 0; i < data.length; i++) {
 					html += data[i] + '<br>';
 				}
 				$users.html(html);
 			});
 
-			$messageForm.submit(function(e){
+			$messageForm.submit(function (e) {
 				e.preventDefault();
 				socket.emit('send message', $message.val());
 				$message.val('');
 			});
 
-			socket.on('new message', function(data){
-				$chat.append('<strong>'+data.user+'</strong>: '+data.msg+'<br>');
+			socket.on('new message', function (data) {
+				$chat.append('<strong>' + data.user + '</strong>: ' + data.msg + '<br>');
 			});
 
 		});
-		</script>
+	</script>
 </body>
+
 </html>
